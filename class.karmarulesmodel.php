@@ -1,17 +1,26 @@
 <?php if (!defined('APPLICATION')) exit();
 
 class KarmaRulesModel extends VanillaModel{
+    
+    static $Rules = NULL;
+    
     public function __construct() {
         parent::__construct('KarmaRules');
     }
 
     public function GetRules(){
-        return $this->SQL
+        if(self::$Rules){
+            return self::$Rules;
+        }
+        
+        self::$Rules =  $this->SQL
         ->Select('kr.*')
         ->From('KarmaRules kr')
         ->Where('kr.Remove <>',1)
         ->Get()
         ->Result();
+        
+        return self::$Rules;
     }
  
     public function GetTally($UserID,$RuleID=null){
@@ -19,7 +28,7 @@ class KarmaRulesModel extends VanillaModel{
         ->Select('krt.*')
         ->From('KarmaRulesTally krt')
         ->Where(
-			($RuleID) ?
+            ($RuleID) ?
             array(
                 'krt.UserID'=>$UserID,
                 'krt.RuleID'=>$RuleID
@@ -61,6 +70,7 @@ class KarmaRulesModel extends VanillaModel{
     }
  
     public function SetRule($Condition,$Operation,$Target,$Amount){
+        self::$Rules=NULL;
         $this->SQL
         ->Insert('KarmaRules',
             array(
@@ -70,10 +80,11 @@ class KarmaRulesModel extends VanillaModel{
                 'Amount'=>$Amount
             )
         );
-		
+        
     }
  
     public function RemoveRule($RuleID){
+        self::$Rules=NULL;
         $this->SQL
         ->Update('KarmaRules',
             array(

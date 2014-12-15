@@ -8,11 +8,19 @@ class KarmaBankModel extends VanillaModel{
     public function __construct($UserID) {
         parent::__construct('KarmaBank');
         $this->UserID=$UserID;
-        if(!self::$FC)
-               self::$FC = new Gdn_Filecache();
+        if(!self::$FC){
+            if(Gdn::Cache()->Type()==Gdn_Cache::CACHE_TYPE_NULL){
+                self::$FC = new Gdn_FileCache();
+            }else{
+                self::$FC = Gdn::Cache();
+            }
+            
+        }
         
         //self::$FC->AddContainer(array(Gdn_Cache::CONTAINER_LOCATION=>PATH_CACHE.'/karmacache'));
-        self::$FC->AddContainer(array(Gdn_Cache::CONTAINER_LOCATION=>'./cache/karmacache'));
+        if(Gdn::Cache()->Type()==Gdn_Cache::CACHE_TYPE_FILE || Gdn::Cache()->Type()==Gdn_Cache::CACHE_TYPE_NULL)
+            self::$FC->AddContainer(array(Gdn_Cache::CONTAINER_LOCATION=>'./cache/karmacache'));
+        
        
     }
     
@@ -26,7 +34,7 @@ class KarmaBankModel extends VanillaModel{
             return;
         //Using file cache to psuedo-lock
         $Lock = $this->UserID.'|'.$Type.'|'.$Amount.'|'.$Value;
-          self::$FC->Add($Lock,1,array(Gdn_Cache::FEATURE_EXPIRY => C('Plugins.KarmaBank.CacheExpire',1000)));
+        self::$FC->Store($Lock,1,array(Gdn_Cache::FEATURE_EXPIRY => C('Plugins.KarmaBank.CacheExpire',1000)));
         
         $Amount=number_format($Amount,2,'.','');
         $CurrentBalance = $this->SQL

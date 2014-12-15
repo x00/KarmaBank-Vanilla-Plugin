@@ -17,7 +17,7 @@ $PluginInfo['KarmaBank'] = array(
     'SettingsPermission' => 'Garden.Settings.Manage',
     'RegisterPermissions' =>array('Plugins.KarmaBank.RewardTax'),
     'RequiredApplications' => array('Vanilla' => '2.1'),
-    'Version' => '0.9.7.0b',
+    'Version' => '0.9.7.1b',
     'Author' => "Paul Thomas",
     'AuthorEmail' => 'dt01pqt_pt@yahoo.com'
 );
@@ -189,7 +189,7 @@ class KarmaBank extends Gdn_Plugin {
         $Sender->Form->SetValue('CommentShowBalance',C('Plugins.KarmaBank.CommentShowBalance'));
         $Sender->AddDefinition('KBOperationsOptions',json_encode($this->OperationsOptions));
         
-        $Sender->AddJsFile('operationsoptions.js','plugins/KarmaBank');
+        $Sender->AddJsFile('options.js','plugins/KarmaBank');
         
         $Sender->Render('Settings', '', 'plugins/KarmaBank');
     }

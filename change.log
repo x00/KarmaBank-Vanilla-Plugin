@@ -67,3 +67,5 @@
  v0.9.7.0b:Thu Nov 13 07:32:30 GMT 2014
  - profile undefined index error
  - fix caching issue
+v0.9.7.1b:
+ - Condition options show/hide of Meta Description to save space

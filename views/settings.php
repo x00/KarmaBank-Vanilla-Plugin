@@ -138,7 +138,7 @@
 		<?php echo $this->Form->Label(T('KarmaBank.MetaDescription','Meta Description:')); ?>
 	 </li>
          <li>
-		<dl>
+		<dl id="KarmaBankMetaDescriptions">
 			<?php foreach ($this->Data['Meta'] As $MetaI => $MetaV){ 
 				echo '<dt>'.$Meta[$MetaI].':</dt><dd>'.T($MetaV).'</dd>';
 			}?>
