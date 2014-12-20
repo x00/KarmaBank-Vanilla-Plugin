@@ -13,12 +13,12 @@ if ($this->Data['Balance']) {
 </div>
 </li>
 <?php foreach ($this->Data['Transactions'] As $Transaction) {
-	$TransParts = split(' ',$Transaction->Type);
-	$Trans=array();
-	foreach($TransParts As $TransPart)
-		$Trans[]=T(urldecode($TransPart));
-	$TransOrder=T($Trans[0].'.Order',trim(join(' ',array_fill(0,count($Trans),'%s'))));
-	$Trans = vsprintf($TransOrder,$Trans);
+    $TransParts = split(' ',$Transaction->Type);
+    $Trans=array();
+    foreach($TransParts As $TransPart)
+        $Trans[]=T(urldecode($TransPart));
+    $TransOrder=T($Trans[0].'.Order',trim(join(' ',array_fill(0,count($Trans),'%s'))));
+    $Trans = vsprintf($TransOrder,$Trans);
 ?>
 <li class="Item KarmaTrans">
 <div class="ItemContent">
@@ -53,20 +53,20 @@ if(Gdn::Session()->CheckPermission('Plugins.KarmaBank.RewardTax') || Gdn::Sessio
 <div class="Configuration">
    <div class="ConfigurationForm">
       <ul>
-	 <li>
-		<?php
-		echo $this->Form->Label(T('KarmaBank.RewardTaxReason','Reason '),'RewardTaxReason');
-		echo $this->Form->TextBox('RewardTaxReason',array('class'=>'SmallInput','maxlength'=>C('Plugins.KarmaBank.ReasonMaxLength',25)));
-		echo $this->Form->Label(T('KarmaBank.Amount','Amount'),'RewardTax');
-		echo $this->Form->TextBox('RewardTax',array('class'=>'SmallInput'));
-		echo $this->Form->Button(T('KarmaBank.RewardTax','Reward / Tax'));
-		?>
-	 </li>
+        <li>
+        <?php
+        echo $this->Form->Label(T('KarmaBank.RewardTaxReason','Reason '),'RewardTaxReason');
+        echo $this->Form->TextBox('RewardTaxReason',array('class'=>'SmallInput','maxlength'=>C('Plugins.KarmaBank.ReasonMaxLength',25)));
+        echo $this->Form->Label(T('KarmaBank.Amount','Amount'),'RewardTax');
+        echo $this->Form->TextBox('RewardTax',array('class'=>'SmallInput'));
+        echo $this->Form->Button(T('KarmaBank.RewardTax','Reward / Tax'));
+        ?>
+        </li>
       </ul>
    </div>
 </div>
- <?php
-      echo $this->Form->Close();
+<?php
+    echo $this->Form->Close();
 }
 ?>
 </div>

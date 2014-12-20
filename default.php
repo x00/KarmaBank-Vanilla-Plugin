@@ -17,7 +17,7 @@ $PluginInfo['KarmaBank'] = array(
     'SettingsPermission' => 'Garden.Settings.Manage',
     'RegisterPermissions' =>array('Plugins.KarmaBank.RewardTax'),
     'RequiredApplications' => array('Vanilla' => '2.1'),
-    'Version' => '0.9.7.1b',
+    'Version' => '0.9.7.2b',
     'Author' => "Paul Thomas",
     'AuthorEmail' => 'dt01pqt_pt@yahoo.com'
 );
@@ -30,7 +30,7 @@ class KarmaBank extends Gdn_Plugin {
     public $Meta;
     public $Operations;
     public $OperationsMap;
-    public $OperationsOptions;
+    public $OperationsOptions = array();
     public $DontTally=array();
     public $MoreMeta=array();
     static public $KarmaChecked = FALSE;
@@ -66,13 +66,13 @@ class KarmaBank extends Gdn_Plugin {
     
     /*Extend API*/
     
-  public function AddMeta($Name, $Explanation,$DontTally=FALSE){
+    public function AddMeta($Name, $Explanation,$DontTally=FALSE){
         $this->Meta[$Name]=$Explanation;
         if($DontTally)
             $this->DontTally[]=$Name;
     }
       
-  public function AddOpperation($Name, $Explanation, $Function, $Options=array()){
+    public function AddOpperation($Name, $Explanation, $Function, $Options=array()){
         $this->Operations[$Name]=$Explanation;
         $this->OperationsMap[$Name]=$Function;
         $this->OperationsOptions[$Name]=$Options;
@@ -89,7 +89,7 @@ class KarmaBank extends Gdn_Plugin {
     
     /*Default Operations*/
     
-  public static function OperationEquals($MetaValue,$Target,$Condition,$User,$LastTrans,$Option){
+    public static function OperationEquals($MetaValue,$Target,$Condition,$User,$LastTrans,$Option){
         return $MetaValue == $Target;
     }
     
@@ -237,8 +237,8 @@ class KarmaBank extends Gdn_Plugin {
     *   Tax/reward system
     */
     public function ProfileController_KarmaBank_Create($Sender,$Args){
-    if(!$this->IsEnabled())
-      return;
+        if(!$this->IsEnabled())
+            return;
         $Sender->Permission('Garden.Profiles.View');
         if(!ctype_digit($Args[0]))
             throw NotFoundException('User');
@@ -283,28 +283,26 @@ class KarmaBank extends Gdn_Plugin {
         $Sender->AddCssFile('karma.css','plugins/KarmaBank/');
         $Sender->GetUserInfo($Sender->ThisUser->UserID,$Sender->ThisUser->Name);
         $Sender->SetTabView('KarmaBank', dirname(__FILE__).DS.'views'.DS.'karmabank.php', 'Profile', 'Dashboard');
-      $Sender->Render();
+        $Sender->Render();
     }
     
     /*
     *   Show balance with comment user meta
     */
     
-   public function DiscussionController_BeforeDiscussionRender_Handler($Sender) {
-     
+    public function DiscussionController_BeforeDiscussionRender_Handler($Sender) {
         if(!$this->IsEnabled() || !C('Plugins.KarmaBank.CommentShowBalance'))
-        return;
+            return;
         $this->CacheBalances($Sender);
-   }
+    }
    
-   //there is an issue of controller getting mixed up
-   //despite being fired from the post controller
-   public function Base_BeforeCommentRender_Handler($Sender) {
+    //there is an issue of controller getting mixed up
+    //despite being fired from the post controller
+    public function Base_BeforeCommentRender_Handler($Sender) {
         if(!$this->IsEnabled() || !C('Plugins.KarmaBank.CommentShowBalance'))
-        return;
-    
+            return;
         $this->CacheBalances($Sender);
-   }
+    }
     
     protected function CacheBalances($Sender) {
         $Discussion = $Sender->Data('Discussion');
@@ -334,23 +332,23 @@ class KarmaBank extends Gdn_Plugin {
     
     public function DiscussionController_CommentInfo_Handler($Sender) {
         if(!$this->IsEnabled() || !C('Plugins.KarmaBank.CommentShowBalance'))
-        return;
+            return;
         $this->ShowBalance($Sender);
 
     }
   
     public function DiscussionController_DiscussionInfo_Handler($Sender) {
         if(!$this->IsEnabled() || !C('Plugins.KarmaBank.CommentShowBalance'))
-        return;
+            return;
         $this->ShowBalance($Sender);
 
     }
 
-  //not actually used in 2.1 due to controller mixup
-  //uses DiscussionController_DiscussionInfo_Handler instead
+    //not actually used in 2.1 due to controller mixup
+    //uses DiscussionController_DiscussionInfo_Handler instead
     public function PostController_CommentInfo_Handler($Sender) {
         if(!$this->IsEnabled() || !C('Plugins.KarmaBank.CommentShowBalance'))
-        return;
+            return;
         $this->ShowBalance($Sender);
     }
 
@@ -364,7 +362,7 @@ class KarmaBank extends Gdn_Plugin {
     *   Sniffing out user meta, applying those rules
     */
 
-    public function CheckKarma($UserID=null){
+    public function CheckKarma($UserID=NULL){
         if(self::$KarmaChecked)
             return;
         if(!$UserID){
@@ -404,14 +402,13 @@ class KarmaBank extends Gdn_Plugin {
             
         $UserMeta= $UMSQL->Get()->Result();
         $MoreMeta=array();
-        
+
         if(GetValue($UserID,$this->MoreMeta))
             $MoreMeta=array_merge($MoreMeta,$this->MoreMeta[$UserID]);
         
         foreach($UserMeta As $ExtraMeta){
             $MoreMeta[$ExtraMeta->Name]=$ExtraMeta->Value;
         }
-        
             
         $User->Meta=$MoreMeta;
         
@@ -450,10 +447,7 @@ class KarmaBank extends Gdn_Plugin {
                     
                 }
             }
-            
-
         }
-        
         
         $TallySet = $KarmaRules->GetTally($UserID);
         $KarmaBank = new KarmaBankModel($UserID);
@@ -475,7 +469,6 @@ class KarmaBank extends Gdn_Plugin {
             }else if(GetValue($Condition,$MoreMeta)){
                 $Value = GetValue($Condition,$MoreMeta);
             }
-                        
 
             if($Value==null)
                 continue;
@@ -488,19 +481,15 @@ class KarmaBank extends Gdn_Plugin {
                 if($TallyRow->RuleID==$Rule->RuleID)
                     $Tally = $TallyRow;
             }
-
-            $TallyValue =!in_array($Condition,$this->DontTally) && $Tally && $Tally->Value? $Tally->Value : 0;
             
+            $TallyValue =!in_array($Condition,$this->DontTally) && $Tally && $Tally->Value? $Tally->Value : 0;
 
             $RuleID=$Rule->RuleID;
             $Target=$Rule->Target;
             $Option = GetValue('Option',$Rule);
             $Type = $Condition.($Option?' '.$Option:'').' '.$Rule->Operation.' '.$Target;
             $Transaction=FALSE;
-            
             if($TallyValue!=$Value){
-                 
-                
                 if(empty($TransByRules)){
                     $LastTrans=null;
                 }else{
@@ -518,7 +507,7 @@ class KarmaBank extends Gdn_Plugin {
                 
                 
                 if(!$KarmaBank->CheckForCollissions($Type,$Rule->Amount,$Value)){//try to prevent collisions (uses file cache psuedo-lock)
-                    if($Transaction){                        
+                    if($Transaction){
                         $KarmaBank->Transaction($Type,$Rule->Amount,$Value,$RuleID);
                     }
                     if(!in_array($Condition,$this->DontTally))
@@ -538,13 +527,13 @@ class KarmaBank extends Gdn_Plugin {
     */
 
     public function Base_BeforeControllerMethod_Handler($Sender) {
-    if(!$this->IsEnabled())
-      return;
+        if(!$this->IsEnabled())
+            return;
         if(!Gdn::Session()->isValid()) return;
         /* QnA Accepted /  Acceptance Counts */
 
         if(C('EnabledPlugins.QnA')
-      && strtolower($Sender->Controller())=='discussion'
+            && strtolower($Sender->Controller())=='discussion'
             && strtolower($Sender->ControllerMethod())=='qna'){
 
             $Comment = Gdn::SQL()->GetWhere('Comment', array('CommentID' => GetValue('commentid',$_GET)))->FirstRow(DATASET_TYPE_ARRAY);
@@ -560,30 +549,30 @@ class KarmaBank extends Gdn_Plugin {
                     $Args=$Sender->ControllerArguments();
                     if($Args[0]=='accept'){
 
-            if ($Discussion['QnA'] != 'Accepted' && (!$Discussion['QnA'] || in_array($Discussion['QnA'], array('Unanswered', 'Answered', 'Rejected')))){
-              $User = Gdn::UserModel()->GetID($Discussion['InsertUserID']);
-              Gdn::SQL()->Update('User',array('QnACountAccept'=>$User->QnACountAccept+1))->Where(array('UserID'=>$User->UserID))->Put();
-              if(Gdn::Session()->UserID==$User->UserID)
-                Gdn::Session()->User->QnACountAccept+=1;
-            }
+                        if ($Discussion['QnA'] != 'Accepted' && (!$Discussion['QnA'] || in_array($Discussion['QnA'], array('Unanswered', 'Answered', 'Rejected')))){
+                          $User = Gdn::UserModel()->GetID($Discussion['InsertUserID']);
+                          Gdn::SQL()->Update('User',array('QnACountAccept'=>$User->QnACountAccept+1))->Where(array('UserID'=>$User->UserID))->Put();
+                          if(Gdn::Session()->UserID==$User->UserID)
+                            Gdn::Session()->User->QnACountAccept+=1;
+                        }
 
-            //You don't get points for accepting your own comments
-            if($Discussion['InsertUserID']!=$Comment['InsertUserID']){
-              if($Comment['QnA'] != 'Accepted'){
-                $User = Gdn::UserModel()->GetID($Comment['InsertUserID']);
-                Gdn::SQL()->Update('User',array('QnACountAcceptance'=>$User->QnACountAcceptance+1))->Where(array('UserID'=>$User->UserID))->Put();
-                if(Gdn::Session()->UserID==$User->UserID)
-                  Gdn::Session()->User->QnACountAcceptance+=1;
-              }
-            }
-
+                        //You don't get points for accepting your own comments
+                        if($Discussion['InsertUserID']!=$Comment['InsertUserID']){
+                            if($Comment['QnA'] != 'Accepted'){
+                                $User = Gdn::UserModel()->GetID($Comment['InsertUserID']);
+                                Gdn::SQL()->Update('User',array('QnACountAcceptance'=>$User->QnACountAcceptance+1))->Where(array('UserID'=>$User->UserID))->Put();
+                                if(Gdn::Session()->UserID==$User->UserID)
+                                    Gdn::Session()->User->QnACountAcceptance+=1;
+                            }
+                        }
                     }
                 }
             }
         }
-          /* QnA Accepted /  Acceptance Counts */
+        
+        /* QnA Accepted /  Acceptance Counts */
 
-          /* check/update Starting Balance */
+        /* check/update Starting Balance */
         if(strtolower($Sender->Controller())=='profile' /*&& ctype_digit($Sender->ControllerMethod())*/){
             $Args=$Sender->ControllerArguments();
             if(ctype_digit(GetValue('0',$Args))){
@@ -633,9 +622,7 @@ class KarmaBank extends Gdn_Plugin {
             ->Column('RuleID','int(11)',FALSE,'primary')
             ->Column('LastTally','decimal(20,2)')
             ->Set();
-            
-       
-              
+
         Gdn::Structure()
             ->Table('KarmaRules')
             ->Column('RuleID','int(11)',FALSE,'key')
@@ -646,15 +633,12 @@ class KarmaBank extends Gdn_Plugin {
             ->Column('Amount','decimal(20,2)')
             ->Column('Remove','int(4)',0)
             ->Set();
-            
-       
+
         Gdn::Structure()
             ->Table('KarmaRules')
             ->PrimaryKey('RuleID')
             ->Set();
-            
-        
-              
+ 
         Gdn::Structure()
             ->Table('KarmaRulesTally')
             ->Column('TallyID','int(11)',FALSE,'key')
@@ -662,8 +646,7 @@ class KarmaBank extends Gdn_Plugin {
             ->Column('UserID', 'int(11)')
             ->Column('Value','decimal(20,2)')
             ->Set();
-        
-        
+
         Gdn::Structure()
             ->Table('KarmaRulesTally')
             ->PrimaryKey('TallyID')

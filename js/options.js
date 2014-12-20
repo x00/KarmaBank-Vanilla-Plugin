@@ -16,11 +16,12 @@ jQuery(document).ready(function($){
     $('#Form_Operation').trigger('change');
 
     $('#Form_Condition').change(function(){
+        cond = $(this).val();
         $('#KarmaBankMetaDescriptions dd, #KarmaBankMetaDescriptions dt').hide()
             $('#KarmaBankMetaDescriptions dt').each(function(){
                 if($(this).text()==cond+':'){
                     $(this).show();
-                    $(this).nextSibling('dd').show();
+                    $(this).next('dd').show();
                 }
             });
     });
