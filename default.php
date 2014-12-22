@@ -17,7 +17,7 @@ $PluginInfo['KarmaBank'] = array(
     'SettingsPermission' => 'Garden.Settings.Manage',
     'RegisterPermissions' =>array('Plugins.KarmaBank.RewardTax'),
     'RequiredApplications' => array('Vanilla' => '2.1'),
-    'Version' => '0.9.7.2b',
+    'Version' => '0.9.7.3b',
     'Author' => "Paul Thomas",
     'AuthorEmail' => 'dt01pqt_pt@yahoo.com'
 );
@@ -623,35 +623,43 @@ class KarmaBank extends Gdn_Plugin {
             ->Column('LastTally','decimal(20,2)')
             ->Set();
 
-        Gdn::Structure()
-            ->Table('KarmaRules')
-            ->Column('RuleID','int(11)',FALSE,'key')
-            ->Column('Condition','varchar(100)')
-            ->Column('Operation','varchar(100)')
-            ->Column('Option','varchar(100)',null)
-            ->Column('Target','decimal(20,2)')
-            ->Column('Amount','decimal(20,2)')
-            ->Column('Remove','int(4)',0)
-            ->Set();
+        if(stripos(Gdn::Controller()->ResolvedPath,'utility/structure')===FALSE){
+            Gdn::Structure()
+                ->Table('KarmaRules')
+                ->Column('RuleID','int(11)',FALSE,'key')
+                ->Column('Condition','varchar(100)')
+                ->Column('Operation','varchar(100)')
+                ->Column('Option','varchar(100)',null)
+                ->Column('Target','decimal(20,2)')
+                ->Column('Amount','decimal(20,2)')
+                ->Column('Remove','int(4)',0)
+                ->Set();
+                
+                $Schema = Gdn::SQL()->FetchTableSchema('KarmaRules');
+                if(!$Schema['RuleID']->PrimaryKey || !$Schema['RuleID']->AutoIncrement){
+                    Gdn::Structure()
+                        ->Table('KarmaRules')
+                        ->PrimaryKey('RuleID')
+                        ->Set();
+                }
 
-        Gdn::Structure()
-            ->Table('KarmaRules')
-            ->PrimaryKey('RuleID')
-            ->Set();
- 
-        Gdn::Structure()
-            ->Table('KarmaRulesTally')
-            ->Column('TallyID','int(11)',FALSE,'key')
-            ->Column('RuleID','int(11)')
-            ->Column('UserID', 'int(11)')
-            ->Column('Value','decimal(20,2)')
-            ->Set();
-
-        Gdn::Structure()
-            ->Table('KarmaRulesTally')
-            ->PrimaryKey('TallyID')
-            ->Set();
-            
+            Gdn::Structure()
+                ->Table('KarmaRulesTally')
+                ->Column('TallyID','int(11)',FALSE,'key')
+                ->Column('RuleID','int(11)')
+                ->Column('UserID', 'int(11)')
+                ->Column('Value','decimal(20,2)')
+                ->Set();
+                
+            $Schema = Gdn::SQL()->FetchTableSchema('KarmaRulesTally');
+            if(!$Schema['TallyID']->PrimaryKey || !$Schema['TallyID']->AutoIncrement){
+                Gdn::Structure()
+                    ->Table('KarmaRulesTally')
+                    ->PrimaryKey('TallyID')
+                    ->Set();
+            }
+        }
+        
         Gdn::Structure()
             ->Table('User')
             ->Column('QnACountAccept','int(11)',0)
