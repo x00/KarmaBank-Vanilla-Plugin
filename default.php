@@ -529,7 +529,7 @@ class KarmaBank extends Gdn_Plugin {
     public function Base_BeforeControllerMethod_Handler($Sender) {
         if(!$this->IsEnabled())
             return;
-        if(!Gdn::Session()->isValid()) return;
+        if(!Gdn::Session()->IsValid()) return;
         /* QnA Accepted /  Acceptance Counts */
 
         if(C('EnabledPlugins.QnA')
@@ -622,8 +622,7 @@ class KarmaBank extends Gdn_Plugin {
             ->Column('RuleID','int(11)',FALSE,'primary')
             ->Column('LastTally','decimal(20,2)')
             ->Set();
-
-        if(stripos(Gdn::Controller()->ResolvedPath,'utility/structure')===FALSE){
+        if(@stripos(Gdn::Controller()->ResolvedPath,'utility/structure')===FALSE){
             Gdn::Structure()
                 ->Table('KarmaRules')
                 ->Column('RuleID','int(11)',FALSE,'key')
@@ -635,13 +634,13 @@ class KarmaBank extends Gdn_Plugin {
                 ->Column('Remove','int(4)',0)
                 ->Set();
                 
-                $Schema = Gdn::SQL()->FetchTableSchema('KarmaRules');
-                if(!$Schema['RuleID']->PrimaryKey || !$Schema['RuleID']->AutoIncrement){
-                    Gdn::Structure()
-                        ->Table('KarmaRules')
-                        ->PrimaryKey('RuleID')
-                        ->Set();
-                }
+            $Schema = Gdn::SQL()->FetchTableSchema('KarmaRules');
+            if(!$Schema['RuleID']->PrimaryKey || !$Schema['RuleID']->AutoIncrement){
+                Gdn::Structure()
+                    ->Table('KarmaRules')
+                    ->PrimaryKey('RuleID')
+                    ->Set();
+            }
 
             Gdn::Structure()
                 ->Table('KarmaRulesTally')
