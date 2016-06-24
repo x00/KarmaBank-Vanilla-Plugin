@@ -227,8 +227,12 @@ class KarmaBank extends Gdn_Plugin {
             return;
         $KarmaBank = new KarmaBankModel($Sender->User->UserID);
         $Balance = $KarmaBank->GetBalance();
-        $Sender->AddProfileTab('KarmaBank','profile/karmabank/'.$Sender->User->UserID.'/'.rawurlencode($Sender->User->Name),
-                        'KarmaBank',T('KarmaBank.KarmaBank','Karma Bank').(isset($Balance->Balance) && is_numeric($Balance->Balance) ? '<span class="Count">'.sprintf(T('KarmaBank.NumberFormat',"%01.2f"),$Balance->Balance).'</span>':''));
+        $Sender->AddProfileTab(
+            'KarmaBank',
+            'profile/karmabank/'.$Sender->User->UserID.'/'.rawurlencode($Sender->User->Name),
+            'KarmaBank',
+            T('KarmaBank.KarmaBank','Karma Bank').(isset($Balance->Balance) && is_numeric($Balance->Balance) ? '<span class="Aside"><span class="Count">'.sprintf(T('KarmaBank.NumberFormat',"%01.2f"),$Balance->Balance).'</span></span>':'')
+        );
     }
 
     /*
