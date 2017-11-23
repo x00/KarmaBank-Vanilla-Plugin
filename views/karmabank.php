@@ -13,7 +13,7 @@ if ($this->Data['Balance']) {
 </div>
 </li>
 <?php foreach ($this->Data['Transactions'] As $Transaction) {
-    $TransParts = split(' ',$Transaction->Type);
+    $TransParts = explode(' ', $Transaction->Type);
     $Trans=array();
     foreach($TransParts As $TransPart)
         $Trans[]=T(urldecode($TransPart));
