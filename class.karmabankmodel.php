@@ -10,7 +10,7 @@ class KarmaBankModel extends VanillaModel{
         $this->UserID=$UserID;
         if(!self::$FC){
             if(Gdn::Cache()->Type()==Gdn_Cache::CACHE_TYPE_NULL){
-                self::$FC = new Gdn_FileCache();
+                self::$FC = new Gdn_Filecache();
             }else{
                 self::$FC = Gdn::Cache();
             }
