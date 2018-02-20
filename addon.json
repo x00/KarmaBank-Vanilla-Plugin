@@ -1,0 +1,21 @@
+{
+    "type": "addon",
+    "key": "KarmaBank",
+    "name": "Karma Bank",
+    "description": "Using simple forum/plugin meta based rules such as comment count, users can earn karma, which is added to their balance, and can even be traded for goods and privileges. <b>You must add a starting balance, and add at least 1 rule to activate</b>.",
+    "settingsUrl": "/dashboard/settings/karmabank",
+    "settingsPermission": "Garden.Settings.Manage",
+    "registerPermissions": [
+        "Plugins.KarmaBank.RewardTax"
+    ],
+    "version": "0.9.7.3b",
+    "authors": [
+        {
+            "name": "Paul Thomas",
+            "email": "dt01pqt_pt@yahoo.com"
+        }
+    ],
+    "require": {
+        "Vanilla": "2.1"
+    }
+}
