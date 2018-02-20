@@ -25,7 +25,7 @@ $PluginInfo['KarmaBank'] = array(
 include_once(PATH_PLUGINS.'/KarmaBank/class.karmabankmodel.php');
 include_once(PATH_PLUGINS.'/KarmaBank/class.karmarulesmodel.php');
 
-class KarmaBank extends Gdn_Plugin {
+class KarmaBankPlugin extends Gdn_Plugin {
 
     public $Meta;
     public $Operations;
@@ -55,9 +55,9 @@ class KarmaBank extends Gdn_Plugin {
         );
         
         $this->OperationsMap=array(
-            'Equals'=>'KarmaBank::OperationEquals',
-            'Every'=>'KarmaBank::OperationEvery',
-            'DiffEquals'=>'KarmaBank::OperationDiffEquals'
+            'Equals'=>'KarmaBankPlugin::OperationEquals',
+            'Every'=>'KarmaBankPlugin::OperationEvery',
+            'DiffEquals'=>'KarmaBankPlugin::OperationDiffEquals'
         );
         //custom mappings
         $this->FireEvent('KarmaBankMetaMap');
@@ -180,7 +180,8 @@ class KarmaBank extends Gdn_Plugin {
 
         $Sender->AddSideMenu();
         $Sender->SetData('Title', T('KarmaBank.KarmaBankSettings','Karma Bank Settings'));
-        $Sender->SetData('Description', T('KarmaBank.KarmaBankDescription',$this->PluginInfo['Description']));
+        $Sender->SetData('Description', T('KarmaBank.KarmaBankDescription',
+        $this->getAddon()->getInfoValue('Description')));
         $Sender->SetData('Meta',$this->Meta);
         $Sender->SetData('Operations',$this->Operations);
 
@@ -596,7 +597,7 @@ class KarmaBank extends Gdn_Plugin {
     *   Earlier per request cron, hot version update of structure, and map meta spec
     */
     public function Base_BeforeDispatch_Handler($Sender){
-        if(C('Plugins.KarmaBank.Version')!=$this->PluginInfo['Version'])
+        if(C('Plugins.KarmaBank.Version')!=$this->getAddon()->getVersion())
             $this->Structure();
         /* load meta details */
         $this->MetaMap();
@@ -671,6 +672,6 @@ class KarmaBank extends Gdn_Plugin {
 
         //Save Version for hot update
 
-        SaveToConfig('Plugins.KarmaBank.Version', $this->PluginInfo['Version']);
+        SaveToConfig('Plugins.KarmaBank.Version', $this->getAddon()->getVersion());
    }
 }
